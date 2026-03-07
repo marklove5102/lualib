@@ -13,7 +13,7 @@
         <OtherUnitFiles Value="..\src"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="3">
+    <Files Count="4">
       <Item1>
         <Filename Value="..\src\lua54.pas"/>
         <UnitName Value="lua54"/>
@@ -26,10 +26,20 @@
         <Filename Value="..\src\lualib54.pas"/>
         <UnitName Value="lualib54"/>
       </Item3>
+      <Item4>
+        <Filename Value="lualib.pas"/>
+        <Type Value="Main Unit"/>
+        <UnitName Value="lualib"/>
+      </Item4>
     </Files>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
     </UsageOptions>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="FCL"/>
+      </Item1>
+    </RequiredPkgs>
     <PublishOptions>
       <Version Value="2"/>
       <UseFileFilters Value="True"/>

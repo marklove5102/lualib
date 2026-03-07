@@ -1,6 +1,7 @@
 .cursor
 .vscode
 package/backup
+package/lib
 *.o
 *.dll
 *.so
