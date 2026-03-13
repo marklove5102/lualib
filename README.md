@@ -29,7 +29,9 @@ lualib/
     lualib54.pas   — standard libs (optional)
   example/
     mymodule.lpr         — пример C-модуля для Lua (DLL)
-    run_lua.lpr          — пример хоста (вызов Lua из Pascal)
+    run_lua.lpr          — пример хоста (запуск скрипта)
+    callbacks.lpr        — коллбеки: вызов Lua из Pascal и передача функций
+    callbacks_demo.lua   — демо для callbacks
     test_mymodule.lua    — вызов mymodule из Lua
   package/
     lualib.lpk    — пакет Lazarus (подключение в IDE)

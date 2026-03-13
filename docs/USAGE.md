@@ -328,7 +328,30 @@ lua_register(L, 'my_callback', @my_callback);
 
 В Lua: `my_callback(123)` — вызовет вашу функцию.
 
-Пример хоста, который запускает Lua-скрипт: **example/run_lua.lpr** (см. в проекте).
+### 7.4. Коллбеки: вызов Lua из Pascal и передача функций
+
+Полный пример в каталоге **example/**:
+
+- **callbacks.lpr** — хост, который регистрирует функции для вызова из Lua и для вызова Lua из Pascal.
+- **callbacks_demo.lua** — скрипт, который их использует.
+
+Запуск: `callbacks callbacks_demo.lua` (сборка: `fpc -Fu"../src" -Fi"../src" callbacks.lpr` из каталога example).
+
+| Действие | Как |
+|----------|-----|
+| **Lua вызывает Pascal** | Регистрируйте C-функцию через `lua_register` или `luaL_setfuncs`; в Lua вызывайте по имени (как в mymodule). |
+| **Lua передаёт функцию в Pascal** | В C-функции аргумент с индексом 1 — функция: `luaL_checktype(L, 1, LUA_TFUNCTION)`. Сохранить в реестре: `lua_pushvalue(L, 1); ref := luaL_ref(L, LUA_REGISTRYINDEX)`. |
+| **Pascal вызывает переданную Lua-функцию** | Функция на стеке (индекс 1), аргументы — 2, 3, …; подготовить стек: функция на вершине, под ней аргументы; вызвать `lua_pcall(L, nargs, LUA_MULTRET, 0)`. Удобно: `lua_rotate(L, 1, nargs)` сдвигает функцию на вершину. |
+| **Pascal вызывает сохранённую ранее функцию** | `lua_rawgeti(L, LUA_REGISTRYINDEX, ref)`, затем положить аргументы, затем `lua_pcall(L, nargs, nresults, 0)`. |
+
+В **callbacks.lpr** реализовано:
+
+- **pascal.call_lua_func(func, ...)** — Pascal вызывает переданную Lua-функцию с аргументами и возвращает её результаты.
+- **pascal.store_callback(func)** — сохранить Lua-функцию в реестре (для последующего вызова из Pascal).
+- **pascal.invoke_stored()** — вызвать сохранённую функцию (без аргументов).
+- **pascal.pascal_side_calc(a, b)** — пример: Pascal-функция, которая при наличии сохранённого коллбека вызывает его с результатом a+b.
+
+Пример хоста, который только запускает скрипт: **example/run_lua.lpr**.
 
 ---
 
