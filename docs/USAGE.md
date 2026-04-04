@@ -413,3 +413,32 @@ lua_register(L, 'my_callback', @my_callback);
 
 - **lualib54.pas** нужен для **хоста** (вызов Lua из Pascal): в нём `luaL_openlibs` и `luaopen_*`. Для одного только C-модуля (DLL для `require`) достаточно **lua54** и **lauxlib54**.
 - Имя DLL Lua в привязках задаётся константой **LUA54_LIB** в `lua54.pas` (по умолчанию `lua54.dll` на Windows). Если у вас библиотека называется иначе — измените эту константу и пересоберите.
+
+---
+
+## 10. LuaJIT (отдельно от Lua 5.4)
+
+**LuaJIT** использует C API уровня **Lua 5.1** (с расширениями в заголовках LuaJIT), а не 5.4. Юниты **lua54 / lauxlib54 / lualib54** с библиотекой `libluajit-5.1` **совместимы по ABI не будут** — для встраивания LuaJIT в Pascal нужен отдельный набор:
+
+| Юнит | Назначение |
+|------|------------|
+| **luajit51.pas** | Ядро (`lua.h`): стек, таблицы, `lua_pcall`, расширения LuaJIT (`lua_copy`, `lua_tonumberx`, …). |
+| **lauxlib51.pas** | Вспомогательная библиотека (`lauxlib.h`). |
+| **lualib51.pas** | Стандартные библиотеки + **bit**, **jit**, **ffi**, **string.buffer** (`lualib.h`). |
+| **luajit_ext.pas** | Расширение `luajit.h`: **luaJIT_setmode** и константы режимов JIT. |
+
+Константа **`LUAJIT_LIB`** в `luajit51.pas`: по умолчанию на Unix — `libluajit-5.1.so.2`, на Windows — `lua51.dll`. На части дистрибутивов SONAME может быть `libluajit-5.1.so` без `.2` — при ошибке загрузки библиотеки поправьте имя в исходнике (как для `LUA54_LIB`).
+
+В Pascal идентификаторы **без учёта регистра**: параметр с именем `l` совпадал бы с `L` → в **lauxlib51** для длины строки используется имя **`len`**, а не `l`. Статус потока из C **`LUA_YIELD`** в юните назван **`LUA_YIELD_`**, чтобы не конфликтовать с функцией **`lua_yield`**.
+
+**Не смешивайте** в одном модуле вызовы `lua54` и `luajit51` для одного и того же `lua_State*`: это разные API и разные рантаймы.
+
+### 10.1. Пример хоста и сборка
+
+- Исходник: **example/run_luajit.lpr** — по смыслу как `run_lua.lpr`, но `uses luajit51, lauxlib51, lualib51`.
+- Linux: из корня репозитория **`./build_run_luajit.sh`** (логика **FPCDIR** такая же, как у `build_run_lua.sh`).
+- Проверка скриптом: **`example/test_luajit.lua`**.
+
+### 10.2. Пакет Lazarus
+
+Файл **[package/lualib_jit.lpk](package/lualib_jit.lpk)** — отдельный пакет **lualib_jit** (не путать с **lualib** для 5.4). Подключение: **Project Inspector** → **New requirement** → **lualib_jit**. Зависимость от **FCL** указана в `.lpk` (для `LazarusPackageIntf` в служебном `lualib_jit.pas`), как у пакета Lua 5.4.

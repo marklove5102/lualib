@@ -1,4 +1,4 @@
-# Pascal bindings to Lua 5.4 C API
+# Pascal bindings to Lua 5.4 C API (and LuaJIT)
 
 Free Pascal units to build **dynamic libraries (C modules)** loadable from Lua 5.4 via `require()`.
 
@@ -6,11 +6,13 @@ Free Pascal units to build **dynamic libraries (C modules)** loadable from Lua 5
 - **lauxlib54.pas** — Auxiliary library (lauxlib.h)
 - **lualib54.pas** — Standard libraries (lualib.h), optional, for embedding a Lua host in Pascal
 
+**LuaJIT** (отдельный стек, C API 5.1 / LuaJIT): **luajit51.pas**, **lauxlib51.pas**, **lualib51.pas**, **luajit_ext.pas**; пакет Lazarus **package/lualib_jit.lpk**; пример **example/run_luajit.lpr**. Подробнее — [docs/USAGE.md](docs/USAGE.md) §10.
+
 Compiler: Free Pascal (e.g. from [fpcupdeluxe](https://github.com/LongDirtyAnimAlf/fpcupdeluxe) in `C:\fpcupdeluxe`).
 
 Одни и те же единицы используются для **двух сценариев**: (1) вызов Lua из Pascal — программа-хост создаёт состояние, подключает библиотеки, выполняет скрипты; (2) вызов Pascal из Lua — ваш код в виде DLL загружается через `require()`.
 
-**Подробная документация:** [docs/USAGE.md](docs/USAGE.md) — как пользоваться библиотекой, писать свои модули, встраивать Lua в приложение, **подключить пакет в Lazarus** ([package/lualib.lpk](package/lualib.lpk)), решать типичные проблемы.
+**Подробная документация:** [docs/USAGE.md](docs/USAGE.md) — как пользоваться библиотекой, писать свои модули, встраивать Lua в приложение, **подключить пакет в Lazarus** ([package/lualib.lpk](package/lualib.lpk) для Lua 5.4, [package/lualib_jit.lpk](package/lualib_jit.lpk) для LuaJIT), решать типичные проблемы.
 
 ## Requirements
 
@@ -18,6 +20,7 @@ Compiler: Free Pascal (e.g. from [fpcupdeluxe](https://github.com/LongDirtyAnimA
 - Lua 5.4: interpreter and **lua54.dll** (Windows) or **liblua.so.5.4** (Unix).  
   Your module DLL will link to this library; the Lua executable must use the same library.  
   The OS loader looks for **lua54.dll** (name is set in `lua54.pas` as `LUA54_LIB`): first the directory of the process exe (e.g. lua.exe when running from Lua, or your exe when running a host), then system dirs and **PATH**. See [docs/USAGE.md](docs/USAGE.md) §1.1.
+- **LuaJIT** (optional): **libluajit-5.1.so.2** (Unix) or **lua51.dll** (Windows); see `LUAJIT_LIB` in `luajit51.pas` and [docs/USAGE.md](docs/USAGE.md) §10.
 
 ## Directory layout
 
@@ -27,18 +30,26 @@ lualib/
     lua54.pas      — core API
     lauxlib54.pas  — auxiliary
     lualib54.pas   — standard libs (optional)
+    luajit51.pas   — LuaJIT core (lua.h 5.1 / LuaJIT)
+    lauxlib51.pas  — LuaJIT auxiliary
+    lualib51.pas   — LuaJIT standard libs + jit/ffi
+    luajit_ext.pas — luaJIT_setmode (luajit.h)
   example/
     mymodule.lpr         — пример C-модуля для Lua (DLL)
     run_lua.lpr          — пример хоста (запуск скрипта)
+    run_luajit.lpr       — пример хоста LuaJIT
+    test_luajit.lua      — проверка run_luajit
     callbacks.lpr        — коллбеки: вызов Lua из Pascal и передача функций
     callbacks_demo.lua   — демо для callbacks
     test_mymodule.lua    — вызов mymodule из Lua
   package/
-    lualib.lpk    — пакет Lazarus (подключение в IDE)
+    lualib.lpk       — пакет Lazarus (Lua 5.4)
+    lualib_jit.lpk   — пакет Lazarus (LuaJIT)
   docs/
     USAGE.md       — руководство по использованию
   build.cmd        — сборка примера (Windows x86_64)
-  build.sh         — сборка примера (Linux/Unix)
+  build.sh              — сборка примера (Linux/Unix)
+  build_run_luajit.sh   — сборка примера хоста LuaJIT (Linux/Unix)
   build.ps1        — сборка примера (PowerShell)
   README.md
 ```

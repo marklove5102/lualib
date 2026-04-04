@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="lualib_jit"/>
+    <Type Value="RunAndDesignTime"/>
+    <Description Value="Pascal bindings to LuaJIT C API (luajit51, lauxlib51, lualib51, luajit_ext). Separate from Lua 5.4 package lualib."/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\"/>
+        <OtherUnitFiles Value="..\src"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files Count="5">
+      <Item1>
+        <Filename Value="..\src\luajit51.pas"/>
+        <UnitName Value="luajit51"/>
+      </Item1>
+      <Item2>
+        <Filename Value="..\src\lauxlib51.pas"/>
+        <UnitName Value="lauxlib51"/>
+      </Item2>
+      <Item3>
+        <Filename Value="..\src\lualib51.pas"/>
+        <UnitName Value="lualib51"/>
+      </Item3>
+      <Item4>
+        <Filename Value="..\src\luajit_ext.pas"/>
+        <UnitName Value="luajit_ext"/>
+      </Item4>
+      <Item5>
+        <Filename Value="lualib_jit.pas"/>
+        <Type Value="Main Unit"/>
+        <UnitName Value="lualib_jit"/>
+      </Item5>
+    </Files>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="FCL"/>
+      </Item1>
+    </RequiredPkgs>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

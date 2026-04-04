@@ -11,3 +11,5 @@ package/lib
 GPATH
 GRTAGS
 GTAGS
+example/run_lua
+example/run_luajit
